@@ -4,7 +4,8 @@ var express = require('express'),
 	cookieParser = require('cookie-parser'),
 	session = require('express-session'),
 	config = require('./config/config.js'),
-	ConnectMongo = require('connect-mongo')(session);
+	ConnectMongo = require('connect-mongo')(session)
+	mongoose = require('mongoose').connect(config.dbURL);
 
 app.set('views', path.join(__dirname, 'views'));
 app.engine('html', require('hogan-express'));
