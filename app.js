@@ -5,7 +5,9 @@ var express = require('express'),
 	session = require('express-session'),
 	config = require('./config/config.js'),
 	ConnectMongo = require('connect-mongo')(session)
-	mongoose = require('mongoose').connect(config.dbURL);
+	mongoose = require('mongoose').connect(config.dbURL),
+	passport = require('passport');
+	FacebookStrategy = require('passport-facebook').Strategy;
 
 app.set('views', path.join(__dirname, 'views'));
 app.engine('html', require('hogan-express'));
@@ -34,7 +36,12 @@ if(env === 'development'){
 	}));	
 }
 
-require('./routers/routers.js')(express, app);
+app.use(passport.initialize());
+app.use(passport.session());
+
+require('./auth/passportAuth.js')(passport, FacebookStrategy, config, mongoose);
+
+require('./routers/routers.js')(express, app,passport);
 
 app.listen(3000, function() {
 	console.log('The Chatter is running on port: 3000')
