@@ -1,4 +1,15 @@
 module.exports = function (io) {
+	var chatRoom = new mongoose.Schema({
+		room_name:String,
+		room_number:Number
+	});
+	var roomModel = mongoose.model('chatRoom', chatRoom);
+	roomModel.find(function (err, result) {
+		if(result){
+			rooms = result;
+		}
+	});
+	
 	var chatrooms = io.of('/roomlist').on('connection', function (socket) {
 		
 		console.log("Connections Established on the Server");
@@ -6,9 +17,19 @@ module.exports = function (io) {
 		socket.emit('roomupdate', JSON.stringify(rooms));
 		
 		socket.on('newroom', function(data){
-			rooms.push(data);
-			socket.broadcast.emit('roomupdate', JSON.stringify(rooms));
-			socket.emit('roomupdate', JSON.stringify(rooms));
+			roomModel.create(data, function (err, newChatRoom) {
+				rooms.push(newChatRoom);
+				socket.broadcast.emit('roomupdate', JSON.stringify(rooms));
+				socket.emit('roomupdate', JSON.stringify(rooms));
+			});
+		});
+
+		socket.on('deleteroom', function(data){
+			roomModel.remove(data, function (err) {
+				rooms.pop(data);
+				socket.broadcast.emit('roomupdate', JSON.stringify(rooms));
+				socket.emit('roomupdate', JSON.stringify(rooms));
+			});
 		});
 	})
 
