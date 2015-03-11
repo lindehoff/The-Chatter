@@ -11,4 +11,18 @@ module.exports = function (io) {
 			socket.emit('roomupdate', JSON.stringify(rooms));
 		});
 	})
+
+	var messages = io.of('/messages').on('connection', function (socket) {
+		console.log("Connections Established on the Server");
+		socket.on('joinroom', function (data) {
+			socket.username = data.user;
+			socket.userPic = data.userPic;
+			socket.join(data.room);
+			
+		});
+
+		socket.on('newMessage', function (data) {
+			socket.broadcast.to(data.room_number).emit('messagefeed', JSON.stringify(data));
+		});
+	});
 }

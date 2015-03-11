@@ -5,6 +5,49 @@
 	<title>ChatCAT</title>
 	<link rel="stylesheet" href="../css/room.css">
 	<script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+	<script src="/socket.io/socket.io.js"></script>
+	<script>
+		$(function(){
+			var host = '{{config.host}}';
+			var messages = io.connect(host + '/messages');
+			var roomNum = {{room_number}};
+			var userName = '{{user.fullname}}';
+			var userPic = '{{user.profilePic}}';
+
+			messages.on('connect', function(){
+				console.log('Connection Established !!');
+				messages.emit('joinroom', {room:roomNum, user:userName, userPic:userPic})
+			})
+
+			$(document).on('keyup', '.newmessage', function(e){
+				if(e.which === 13 && $(this).val()!=''){
+					messages.emit('newMessage', {
+						room_number:roomNum,
+						user:userName,
+						userPic:userPic,
+						message:$(this).val()
+					})
+					updateMessageFeed(userPic, $(this).val());
+					$(this).val('');
+				}
+			})
+
+			messages.on('messagefeed', function(data){
+				var msgs = JSON.parse(data);
+				updateMessageFeed(msgs.userPic, msgs.message);
+			})
+
+			function updateMessageFeed(userPic, message){
+				var str = '<li>';
+					str += '<div class="msgbox">';
+					str +=	'<div class="pic"><img src="' + userPic + '"></div>';
+					str +=	'<div class="msg"><p>' + message + '</p></div>';
+					str +=	'</div>';
+					str += '</li>';
+				$(str).hide().prependTo($('.messages')).slideDown(100);
+			}
+		})
+	</script>
 </head>
 <body>
 <div class="rm-container">
@@ -18,12 +61,7 @@
 		</div>
 		<div class="rm-messages">
 			<ul class="messages">
-				<li>
-					<div class="msgbox">
-						<div class="pic"><img src="../public/images/profilepic.jpg">Sachin Bhatnagar</div>
-						<div class="msg"><p>Hi there this looks nice !</p></div>
-					</div>
-				</li> 
+				
 			</ul>
 		</div>
 		<div class="rm-users">

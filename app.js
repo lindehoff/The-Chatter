@@ -15,7 +15,6 @@ app.engine('html', require('hogan-express'));
 app.set('view engine', 'html');
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(cookieParser());
-var env = process.env.NODE_ENV || 'development';
 
 var env = process.env.NODE_ENV || 'development';
 if(env === 'development'){
@@ -42,7 +41,7 @@ app.use(passport.session());
 
 require('./auth/passportAuth.js')(passport, FacebookStrategy, config, mongoose);
 
-require('./routers/routers.js')(express, app,passport);
+require('./routers/routers.js')(express, app,passport, config, rooms);
 
 app.set('port', process.env.PORT || 3000);
 var server = require('http').createServer(app);
