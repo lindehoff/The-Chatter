@@ -18,11 +18,27 @@ module.exports = function (io) {
 			socket.username = data.user;
 			socket.userPic = data.userPic;
 			socket.join(data.room);
-			
+			updateUserList(data.room, true);
 		});
 
 		socket.on('newMessage', function (data) {
 			socket.broadcast.to(data.room_number).emit('messagefeed', JSON.stringify(data));
 		});
+
+		function updateUserList(room, updateAll) {
+			var getUsers = io.of('/messages').clients(room);
+			var userlist = [];
+			for (var i in getUsers) {
+				userlist.push({user:getUsers[i].username, userPic: getUsers[i].userPic});
+			};
+			socket.to(room).emit('updateUsersList', JSON.stringify(userlist));
+			if(updateAll){
+				socket.broadcast.to(room).emit('updateUsersList', JSON.stringify(userlist))
+			}
+		}
+
+		socket.on('updateList', function (data) {
+			updateUserList(data.room);
+		})
 	});
 }
