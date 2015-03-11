@@ -16,6 +16,7 @@
 			})
 
 			socket.on('roomupdate', function(data){
+				console.log(data);
 				var procData = JSON.parse(data);
 				$('.roomlist').html('');
 				for(var i = 0; i < procData.length; i++){
@@ -39,7 +40,7 @@
 </head>
 <body>
 	<div class="cr-container">
-		<h1 class="cr-title">ChatCAT</h1>
+		<h1 class="cr-title">The Chatter</h1>
 		<div class="cr-userbox">
 			<img src="{{user.profilePic}}" class="userPic">
 			<h3 class="userName">{{user.fullname}} | <a href="/logout">Logout</a></h3>
