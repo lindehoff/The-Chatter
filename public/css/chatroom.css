@@ -109,3 +109,15 @@ a {
 .roomlist li:hover {
     background: rgb(225, 212, 193);
 }
+.roomlist li > span
+ {
+    float: right;
+    color: #FF6A6A;
+    display:block;
+ }
+
+ .roomlist li > span:hover
+ {
+     display:block;
+     color: red;
+ }

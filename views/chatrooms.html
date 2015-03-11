@@ -16,13 +16,19 @@
 			})
 
 			socket.on('roomupdate', function(data){
-				console.log(data);
 				var procData = JSON.parse(data);
 				$('.roomlist').html('');
 				for(var i = 0; i < procData.length; i++){
-					var str = '<a href="room/' + procData[i].room_number + '"><li>' + procData[i].room_name + '</li></a>';
-					$('.roomlist').prepend(str);
+					var str = '<a href="room/' + procData[i].room_number + '"><li><span class="deleteButton">Remove</span>' + procData[i].room_name + '</li></a>';
+					$('.roomlist').prepend(str).children().filter(":first").data("chatRoom", procData[i] );
 				}
+				$('.deleteButton').on('click',function () {
+					var chatRoom = $(this).closest('a').data("chatRoom");
+					if(confirm('Do you really want to delete the '+chatRoom.room_name+' chat room?')){
+						socket.emit('deleteroom', chatRoom);
+					}
+					return false;
+				});
 			})
 
 

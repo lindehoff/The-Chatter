@@ -19,8 +19,16 @@ module.exports = function (io) {
 		socket.on('newroom', function(data){
 			roomModel.create(data, function (err, newChatRoom) {
 				rooms.push(newChatRoom);
-				socket.broadcast.emit('roomupdate', JSON.stringify(newChatRoom));
-				socket.emit('roomupdate', JSON.stringify(newChatRoom));
+				socket.broadcast.emit('roomupdate', JSON.stringify(rooms));
+				socket.emit('roomupdate', JSON.stringify(rooms));
+			});
+		});
+
+		socket.on('deleteroom', function(data){
+			roomModel.remove(data, function (err) {
+				rooms.pop(data);
+				socket.broadcast.emit('roomupdate', JSON.stringify(rooms));
+				socket.emit('roomupdate', JSON.stringify(rooms));
 			});
 		});
 	})
