@@ -1,6 +1,6 @@
 {
   "name": "The-Chatter",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Web chat with socket.io and FB auth",
   "main": "app.js",
   "scripts": {
@@ -15,7 +15,7 @@
   "bugs": {
     "url": "https://github.com/lindehoff/The-Chatter/issues"
   },
-  "homepage": "https://github.com/lindehoff/The-Chatter",
+  "homepage": "http://chatter.wtre.net",
   "dependencies": {
     "express": "4.2.0",
     "hogan-express": "0.5.2",
