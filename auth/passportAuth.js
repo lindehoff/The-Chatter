@@ -5,7 +5,10 @@ module.exports = function (passport, FacebookStrategy, config, mongoose) {
 		fullname:String,
 		profilePic:String
 	});
-
+	
+	chatUser.virtual('chatUserId').get(function() {
+	    return this._id;
+	});
 	var userModel = mongoose.model('chatUser', chatUser);
 
 	passport.serializeUser(function (user, done) {
