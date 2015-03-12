@@ -1,17 +1,4 @@
-<<<<<<< HEAD
-module.exports = function (io, rooms) {
-
-	var Schema = mongoose.Schema,
-    	ObjectId = Schema.ObjectId;
-	var chatRoom = new Schema({
-		room_name:String,
-		room_number:Number
-	});
-	chatRoom.virtual('chatRoomId').get(function() {
-	    return this._id;
-	});
-	var roomModel = mongoose.model('chatRoom', chatRoom);
-
+module.exports = function (io, rooms, roomModel	) {
 	var chatMessage = new Schema({
 		chatRoomId: ObjectId,
 		chatUserId: ObjectId,
@@ -20,10 +7,6 @@ module.exports = function (io, rooms) {
 	});
 
 	var chatMessageModel = mongoose.model('chatMessage', chatMessage);
-
-=======
-module.exports = function (io, rooms, roomModel	) {
->>>>>>> master
 	roomModel.find(function (err, result) {
 		if(result){
 			rooms = result;
@@ -59,14 +42,8 @@ module.exports = function (io, rooms, roomModel	) {
 		socket.on('joinroom', function (data) {
 			socket.username = data.user;
 			socket.userPic = data.userPic;
-<<<<<<< HEAD
-			socket.chatUserId = data._id;
-			socket.join(data.room);
-			updateUserList(data.room, true);
-=======
 			socket.join(data.room_number);
 			updateUserList(data.room_number, true);
->>>>>>> master
 		});
 
 		socket.on('newMessage', function (data) {
