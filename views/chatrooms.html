@@ -19,7 +19,7 @@
 				var procData = JSON.parse(data);
 				$('.roomlist').html('');
 				for(var i = 0; i < procData.length; i++){
-					var str = '<a href="room/' + procData[i].room_number + '"><li><span class="deleteButton">Remove</span>' + procData[i].room_name + '</li></a>';
+					var str = '<a href="room/' + procData[i]._id + '"><li><span class="deleteButton">Remove</span>' + procData[i].room_name + '</li></a>';
 					$('.roomlist').prepend(str).children().filter(":first").data("chatRoom", procData[i] );
 				}
 				$('.deleteButton').on('click',function () {
@@ -32,12 +32,10 @@
 			})
 
 
-
 			$(document).on('click', '#create', function(){
 				var room_name = $('.newRoom').val();
 				if(room_name!=''){
-					var room_number = parseInt(Math.random() * 10000);
-					socket.emit('newroom', {room_name:room_name, room_number:room_number});
+					socket.emit('newroom', {room_name:room_name});
 					$('.newRoom').val('');
 				}
 			})
