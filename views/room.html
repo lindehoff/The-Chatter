@@ -10,19 +10,20 @@
 		$(function(){
 			var host = '{{config.host}}';
 			var messages = io.connect(host + '/messages');
-			var roomNum = {{room_number}};
+			var room_number = '{{room._id}}';
+			var room_name = '{{room.room_name}}';
 			var userName = '{{user.fullname}}';
 			var userPic = '{{user.profilePic}}';
 
 			messages.on('connect', function(){
 				console.log('Connection Established !!');
-				messages.emit('joinroom', {room:roomNum, user:userName, userPic:userPic})
+				messages.emit('joinroom', {room_number:room_number, user:userName, userPic:userPic})
 			})
 
 			$(document).on('keyup', '.newmessage', function(e){
 				if(e.which === 13 && $(this).val()!=''){
 					messages.emit('newMessage', {
-						room_number:roomNum,
+						room_number:room_number,
 						user:userName,
 						userPic:userPic,
 						message:$(this).val()
@@ -57,20 +58,20 @@
 			})
 
 			setInterval(function(){
-				messages.emit('updateList', {room:roomNum});
+				messages.emit('updateList', {room_number:room_number});
 			}, 15 * 1000);
 		})
 	</script>
 </head>
 <body>
 <div class="rm-container">
-		<h1 class="rm-title">ChatCAT</h1>
+		<h1 class="rm-title">The Chatter</h1>
 		<div class="rm-userbox">
 			<img src="{{user.profilePic}}" class="userPic">
 			<h3 class="userName">{{user.fullname}} | <a href="/logout">Logout</a><a href="/chatrooms">More Chatrooms</a></h3>
 		</div>
 		<div class="rm-roomname">
-			<h5>{{room_name}}</h5>
+			<h5>{{room.room_name}}</h5>
 		</div>
 		<div class="rm-messages">
 			<ul class="messages">

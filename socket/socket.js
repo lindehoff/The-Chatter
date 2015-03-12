@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 module.exports = function (io, rooms) {
 
 	var Schema = mongoose.Schema,
@@ -20,10 +21,14 @@ module.exports = function (io, rooms) {
 
 	var chatMessageModel = mongoose.model('chatMessage', chatMessage);
 
+=======
+module.exports = function (io, rooms, roomModel	) {
+>>>>>>> master
 	roomModel.find(function (err, result) {
 		if(result){
 			rooms = result;
 		}
+		console.log(rooms);
 	});
 
 	var chatrooms = io.of('/roomlist').on('connection', function (socket) {
@@ -54,9 +59,14 @@ module.exports = function (io, rooms) {
 		socket.on('joinroom', function (data) {
 			socket.username = data.user;
 			socket.userPic = data.userPic;
+<<<<<<< HEAD
 			socket.chatUserId = data._id;
 			socket.join(data.room);
 			updateUserList(data.room, true);
+=======
+			socket.join(data.room_number);
+			updateUserList(data.room_number, true);
+>>>>>>> master
 		});
 
 		socket.on('newMessage', function (data) {
@@ -85,7 +95,7 @@ module.exports = function (io, rooms) {
 		}
 
 		socket.on('updateList', function (data) {
-			updateUserList(data.room);
+			updateUserList(data.room_number);
 		})
 	});
 }
