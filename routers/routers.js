@@ -1,4 +1,4 @@
-module.exports = function (express, app, passport, config, rooms) {
+module.exports = function (express, app, passport, config, rooms, roomModel) {
 	var router = express.Router();
 
 	router.get('/', function (req, res, next) {
@@ -22,21 +22,12 @@ module.exports = function (express, app, passport, config, rooms) {
 		res.render('chatrooms', {title: 'Chatrooms', user: req.user})
 	});
 	router.get('/room/:id', securePages, function(req, res, next){
-		var room_name = findTitle(req.params.id)
-		res.render('room', {user:req.user, room_number:req.params.id, config: config,room_name: room_name});
+		console.log("Render room");
+		roomModel.findById(req.params.id,  function (err, result) {
+			res.render('room', {user:req.user, config: config,room: result});
+		});		
 	});
-	function findTitle (room_id) {
-		var n = 0;
-		while(n < rooms.length){
-			if(rooms[n].room_number == room_id){
-				return rooms[n].room_name;
-				break;
-			}else{
-				n++;
-				continue;
-			}
-		}
-	}
+	
 	router.get('/logout', function(req, res, next){
 		req.logout();
 		res.redirect('/');

@@ -35,18 +35,22 @@ if(env === 'development'){
 		resave:true
 	}));	
 }
+var chatRoom = new mongoose.Schema({
+	room_name:String
+});
+var roomModel = mongoose.model('chatRoom', chatRoom);
 
 app.use(passport.initialize());
 app.use(passport.session());
 
 require('./auth/passportAuth.js')(passport, FacebookStrategy, config, mongoose);
 
-require('./routers/routers.js')(express, app,passport, config, rooms);
+require('./routers/routers.js')(express, app,passport, config, rooms, roomModel);
 
 app.set('port', process.env.PORT || 3000);
 var server = require('http').createServer(app);
 var io = require('socket.io').listen(server);
-require('./socket/socket.js')(io, rooms);
+require('./socket/socket.js')(io, rooms, roomModel);
 server.listen(app.get('port'), function () {
 	console.log('ChatCAT on port: '+ app.get('port'));
 })
