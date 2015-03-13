@@ -24,7 +24,8 @@ module.exports = function (express, app, passport, config, rooms, roomModel) {
 	router.get('/room/:id', securePages, function(req, res, next){
 		console.log("Render room");
 		roomModel.findById(req.params.id,  function (err, result) {
-			res.render('room', {user:req.user, config: config,room: result});
+			console.log(JSON.stringify(req.user));
+			res.render('room', {userString: JSON.stringify(req.user), roomString: JSON.stringify(result),user: req.user, room: result, config: config});
 		});		
 	});
 	

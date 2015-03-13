@@ -35,8 +35,13 @@ if(env === 'development'){
 		resave:true
 	}));	
 }
-var chatRoom = new mongoose.Schema({
+var Schema = mongoose.Schema;
+
+var chatRoom = new Schema({
 	room_name:String
+});
+chatRoom.virtual('chatRoomId').get(function() {
+    return this._id;
 });
 var roomModel = mongoose.model('chatRoom', chatRoom);
 
