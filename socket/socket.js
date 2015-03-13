@@ -23,6 +23,7 @@ module.exports = function (io, rooms, roomModel) {
 		socket.emit('roomupdate', JSON.stringify(rooms));
 		
 		socket.on('newroom', function(data){
+			data.room_name = validator.escape(data.room_name);
 			roomModel.create(data, function (err, newChatRoom) {
 				rooms.push(newChatRoom);
 				socket.broadcast.emit('roomupdate', JSON.stringify(rooms));
@@ -51,6 +52,7 @@ module.exports = function (io, rooms, roomModel) {
 
 		socket.on('newMessage', function (data) {
 			console.log(data.room);
+			data.message = validator.escape(data.message);
 			chatMessageModel.create({
 				chatRoom: data.room._id,
 				chatUser: data.user._id,
@@ -58,6 +60,7 @@ module.exports = function (io, rooms, roomModel) {
 				message: data.message
 			}, function (err, newChatUser) {
 				socket.broadcast.to(data.room._id).emit('messagefeed', JSON.stringify(data));
+				socket.to(data.room._id).emit('messagefeed', JSON.stringify(data));
 			});
 		});
 
