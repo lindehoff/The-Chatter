@@ -8,6 +8,7 @@ var express = require('express'),
 	mongoose = require('mongoose').connect(config.dbURL),
 	passport = require('passport');
 	FacebookStrategy = require('passport-facebook').Strategy,
+	validator = require('validator'),
 	rooms = [];
 
 app.set('views', path.join(__dirname, 'views'));
