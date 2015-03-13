@@ -1,7 +1,9 @@
-module.exports = function (io, rooms, roomModel	) {
+module.exports = function (io, rooms, roomModel) {
+	var Schema = mongoose.Schema,
+	ObjectId = Schema.ObjectId;
 	var chatMessage = new Schema({
-		chatRoomId: ObjectId,
-		chatUserId: ObjectId,
+		chatRoom: [{ type :ObjectId, ref : 'chatRoom' }],
+		chatUser: [{ type :ObjectId, ref : 'chatUser' }],
 		posted: Date,
 		message: String
 	});
@@ -44,22 +46,22 @@ module.exports = function (io, rooms, roomModel	) {
 			socket.userPic = data.userPic;
 			socket.join(data.room_number);
 			updateUserList(data.room_number, true);
+			updateMessageList(data.room_number);
 		});
 
 		socket.on('newMessage', function (data) {
-			
-			// chatMessage.create({
-			// 	chatRoomId: data.room_number,
-			// 	chatUserId: data.userId,
-			// 	posted: new Date(),
-			// 	message: data.message
-			// }, function (err, newChatUser) {
-			// 	socket.broadcast.to(data.room_number).emit('messagefeed', JSON.stringify(data));
-			// });
-			socket.broadcast.to(data.room_number).emit('messagefeed', JSON.stringify(data));
+			console.log(data.room);
+			chatMessageModel.create({
+				chatRoom: data.room._id,
+				chatUser: data.user._id,
+				posted: new Date(),
+				message: data.message
+			}, function (err, newChatUser) {
+				socket.broadcast.to(data.room._id).emit('messagefeed', JSON.stringify(data));
+			});
 		});
 
-		function updateUserList(rooms, updateAll) {
+		function updateUserList(room, updateAll) {
 			var getUsers = io.of('/messages').clients(room);
 			var userlist = [];
 			for (var i in getUsers) {
@@ -69,6 +71,11 @@ module.exports = function (io, rooms, roomModel	) {
 			if(updateAll){
 				socket.broadcast.to(room).emit('updateUsersList', JSON.stringify(userlist))
 			}
+		}
+		function updateMessageList(roomId) {
+			chatMessageModel.find({ 'chatRoom': roomId }).populate('chatUser').exec(function (err, messages) {
+				socket.to(roomId).emit('messagefeed', JSON.stringify(messages));
+			})
 		}
 
 		socket.on('updateList', function (data) {

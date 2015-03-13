@@ -8,24 +8,25 @@
 	<script src="/socket.io/socket.io.js"></script>
 	<script>
 		$(function(){
+			console.log({{test}});
 			var host = '{{config.host}}';
 			var messages = io.connect(host + '/messages');
-			var room_number = '{{room._id}}';
-			var room_name = '{{room.room_name}}';
-			var userName = '{{user.fullname}}';
-			var userPic = '{{user.profilePic}}';
+			var room = JSON.parse('{{& roomString}}');
+			var user = JSON.parse('{{& userString}}');
+			var room_name = room.room_name;
+			var userName = user.fullname;
+			var userPic = user.profilePic;
 
 			messages.on('connect', function(){
 				console.log('Connection Established !!');
-				messages.emit('joinroom', {room_number:room_number, user:userName, userPic:userPic})
+				messages.emit('joinroom', {room_number:room._id, user:userName, userPic:userPic})
 			})
 
 			$(document).on('keyup', '.newmessage', function(e){
 				if(e.which === 13 && $(this).val()!=''){
 					messages.emit('newMessage', {
-						room_number:room_number,
-						user:userName,
-						userPic:userPic,
+						room:room,
+						user:user,
 						message:$(this).val()
 					})
 					updateMessageFeed(userPic, $(this).val());
@@ -35,7 +36,13 @@
 
 			messages.on('messagefeed', function(data){
 				var msgs = JSON.parse(data);
-				updateMessageFeed(msgs.userPic, msgs.message);
+				if(Array.isArray(msgs)){
+					msgs.forEach(function(msg) {
+					    updateMessageFeed(msg.chatUser[0].profilePic, msg.message);
+					});
+				}else{
+					updateMessageFeed(msgs.user.profilePic, msgs.message);
+				}
 			})
 
 			function updateMessageFeed(userPic, message){
@@ -58,7 +65,7 @@
 			})
 
 			setInterval(function(){
-				messages.emit('updateList', {room_number:room_number});
+				messages.emit('updateList', {room_number:room._id});
 			}, 15 * 1000);
 		})
 	</script>

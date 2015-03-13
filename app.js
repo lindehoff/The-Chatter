@@ -35,8 +35,8 @@ if(env === 'development'){
 		resave:true
 	}));	
 }
-var Schema = mongoose.Schema,
-	ObjectId = Schema.ObjectId;
+var Schema = mongoose.Schema;
+
 var chatRoom = new Schema({
 	room_name:String
 });
